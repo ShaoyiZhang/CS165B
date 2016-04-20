@@ -28,33 +28,53 @@ class LDA:
         
         for i in range(self.numOfClass):
             if (i <= self.numOfClass):
-                endOfClass += (self.metadata[i+1]+1)
+                endOfClass += (self.metadata[i+1])
             for ele in range(startOfClass,endOfClass):
+
                 self.matrix[index].append(i+1)
                 index+=1
             startOfClass = endOfClass+1
 
         # matrix is a n*p dimensional matrix
         # n = # of data points
+        # p = # of columns
         # p-1 = number of attributes
         # last column is a numeric label
-        
-        x1 = 0
-        x2 = 0
-        x3 = 0
-        for row in range(len(self.matrix)):
-            if self.matrix[row][3] == 1:
-                x1+=1
-            if self.matrix[row][3] == 2:
-                x2+=1
-            if self.matrix[row][3] == 3:
-                x3+=1
-        print(x1,x2,x3)
-        
-        for row in self.matrix:
-            print(row)
-            
 
-    #def centroid():
+        self.n = len(self.matrix)
+        if (self.n>1):
+            self.p = len(self.matrix[0])
+        else:
+            self.p = 0
+
+    def centroid(self):
+        index = 0
+        startOfClass = 0
+        endOfClass = -1
+
+        totalVector = [0] * (self.p - 1)
+        print(totalVector)
+        #totalMatrix = [totalVector] * self.numOfClass
+        meanMatrix = []
+        for cl in range(self.numOfClass):
+            if (cl <= self.numOfClass):
+                endOfClass += (self.metadata[cl+1]+1)
+                #print("endofclass ",endOfClass)
+            for ele in range(startOfClass,endOfClass):
+                row = []
+                for i in range(self.p-1):
+                    #print("accsesing!")
+                    totalVector[i] += self.matrix[index][i]
+                    index+=1
+                    row.append(self.matrix[index][i])
+                    print(ele)
+                print(row)
+            startOfClass = endOfClass+1
+            meanMatrix.append(totalVector)
+            totalVector = [0] * (self.p - 1)
+        print("tottal:",self.n)
+        print(meanMatrix)
+
 example = LDA("/Users/Shawn/Desktop/cs165b/HW2-6/testing.txt")
 
+example.centroid()
