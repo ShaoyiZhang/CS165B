@@ -3,6 +3,8 @@ import numpy as np
 class LDA:
     def __init__(self,filename):
         self.txtToMatrix(filename)
+        self.centroid()
+        self.buildDiscFuncs()
     def txtToMatrix(self,filename):
         infile = open(filename,'r')
         buffer = infile.read()
@@ -24,16 +26,13 @@ class LDA:
 
         index = 0
         startOfClass = 0
-        endOfClass = -1
+        endOfClass = 0
         
-        for i in range(self.numOfClass):
-            if (i <= self.numOfClass):
-                endOfClass += (self.metadata[i+1])
-            for ele in range(startOfClass,endOfClass):
-
-                self.matrix[index].append(i+1)
+        for cl in range(self.numOfClass):
+            for ele in range(self.metadata[cl+1]):
+                self.matrix[index].append(cl+1)
                 index+=1
-            startOfClass = endOfClass+1
+            
 
         # matrix is a n*p dimensional matrix
         # n = # of data points
@@ -65,21 +64,42 @@ class LDA:
 
             meanMatrix.append(map(lambda col: col/self.metadata[cl+1] ,totalVector))
             totalVector = [0] * (self.p - 1)
+    
+#        self.matrix = np.matrix(self.matrix)
+        self.meanMatrix = meanMatrix
+        
+    
+    def midPoint(self,pointA,pointB):
+        midPoint = []
+        for coeff in range(len(pointA)):
+            midPoint.append((pointA[coeff] + pointB[coeff])/2)
+        return midPoint
+            
+    def buildDiscFuncs(self):
+        funcs = []
+        mids = []
+        funcs.append(np.cross(self.meanMatrix[0],self.meanMatrix[1]).tolist())
+        funcs.append(np.cross(self.meanMatrix[0],self.meanMatrix[2]).tolist())
+        funcs.append(np.cross(self.meanMatrix[1],self.meanMatrix[2]).tolist())
+        mids.append(self.midPoint(self.meanMatrix[0],self.meanMatrix[1]))
+        mids.append(self.midPoint(self.meanMatrix[0],self.meanMatrix[2]))
+        mids.append(self.midPoint(self.meanMatrix[1],self.meanMatrix[2]))
+
+        for cl in range(self.metadata[0]): 
+            constant = 0
+            for coeff in range(self.p-1):
+                constant -= funcs[cl][coeff] * mids[cl][coeff]
+            funcs[cl].append(constant)
+        self.funcs = funcs
 
 
-        print(meanMatrix)
-        print(np.zeros((4,4)))
-    '''
-    def scatterWithinClass(self):
-        S_W = np.zeros((4,4))
-        for cl,mv in zip(range(1,4), mean_vectors):
-            class_sc_mat = np.zeros((4,4))                  # scatter matrix for every class
-            for row in X[y == cl]:
-                row, mv = row.reshape(4,1), mv.reshape(4,1) # make column vectors
-                class_sc_mat += (row-mv).dot((row-mv).T)
-            S_W += class_sc_mat                             # sum class scatter matrices
-        print('within-class Scatter Matrix:\n', S_W)
-    '''        
-#example = LDA("/Users/Shawn/Desktop/cs165b/HW2-6/testing.txt")
-example = LDA("testing.txt")
-example.centroid()
+class triclassify:
+    def __init__(self,trainFile,testFile):
+        self.classifer = LDA(trainFile).funcs
+        self.applyToTest(testFile)
+    def applyToTest(self,testFile):
+
+example = triclassify()
+#example = LDA("testing.txt")
+#example.centroid()
+
