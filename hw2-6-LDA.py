@@ -9,8 +9,8 @@ class LDA:
         buffer = buffer.split('\n')
         buffer = map(lambda row: row.split(),buffer)
         self.metadata = buffer[0]
-        print(len(buffer[0]))
-        self.metadata = map(lambda x: x and x.isdigit() and int(x) or None,buffer[0])        
+        self.metadata = map(lambda x: x and x.isdigit() and int(x) or None,buffer[0])
+        
         # index 0: the # of classes in the test set
         # index 1-n: the # of data point in each class
 
@@ -53,26 +53,20 @@ class LDA:
         endOfClass = -1
 
         totalVector = [0] * (self.p - 1)
-        print(totalVector)
-        #totalMatrix = [totalVector] * self.numOfClass
+
         meanMatrix = []
+
         for cl in range(self.numOfClass):
-            if (cl <= self.numOfClass):
-                endOfClass += (self.metadata[cl+1]+1)
-                #print("endofclass ",endOfClass)
-            for ele in range(startOfClass,endOfClass):
-                row = []
-                for i in range(self.p-1):
-                    #print("accsesing!")
-                    totalVector[i] += self.matrix[index][i]
-                    index+=1
-                    row.append(self.matrix[index][i])
-                    print(ele)
-                print(row)
-            startOfClass = endOfClass+1
-            meanMatrix.append(totalVector)
+            for i in range(self.metadata[cl+1]):
+                for p in range(self.p-1):
+                    totalVector[p] += self.matrix[index][p]
+
+                index+=1
+
+            meanMatrix.append(map(lambda col: col/self.metadata[cl+1] ,totalVector))
             totalVector = [0] * (self.p - 1)
-        print("tottal:",self.n)
+
+
         print(meanMatrix)
 
 example = LDA("/Users/Shawn/Desktop/cs165b/HW2-6/testing.txt")
