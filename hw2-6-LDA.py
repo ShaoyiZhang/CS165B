@@ -68,7 +68,18 @@ class LDA:
 
 
         print(meanMatrix)
-
+        print(np.zeros((4,4)))
+    '''
+    def scatterWithinClass(self):
+        S_W = np.zeros((4,4))
+        for cl,mv in zip(range(1,4), mean_vectors):
+            class_sc_mat = np.zeros((4,4))                  # scatter matrix for every class
+            for row in X[y == cl]:
+                row, mv = row.reshape(4,1), mv.reshape(4,1) # make column vectors
+                class_sc_mat += (row-mv).dot((row-mv).T)
+            S_W += class_sc_mat                             # sum class scatter matrices
+        print('within-class Scatter Matrix:\n', S_W)
+    '''        
 example = LDA("/Users/Shawn/Desktop/cs165b/HW2-6/testing.txt")
 
 example.centroid()
