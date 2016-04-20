@@ -80,6 +80,6 @@ class LDA:
             S_W += class_sc_mat                             # sum class scatter matrices
         print('within-class Scatter Matrix:\n', S_W)
     '''        
-example = LDA("/Users/Shawn/Desktop/cs165b/HW2-6/testing.txt")
-
+#example = LDA("/Users/Shawn/Desktop/cs165b/HW2-6/testing.txt")
+example = LDA("testing.txt")
 example.centroid()
