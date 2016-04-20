@@ -10,18 +10,18 @@ class LDA:
         buffer = map(lambda row: row.split(),buffer)
         self.metadata = buffer[0]
         print(len(buffer[0]))
-        self.metadata = map(lambda x: x and x.isdigit() and int(x) or None,buffer[0])
-        
-        
+        self.metadata = map(lambda x: x and x.isdigit() and int(x) or None,buffer[0])        
         # index 0: the # of classes in the test set
         # index 1-n: the # of data point in each class
         self.numOfClass = self.metadata[0]
         del buffer[0]
-        if buffer[-1] == '':
-            del buffer[-1]
+        print(len(buffer))
+        del buffer[-1]
+        print(len(buffer))
+        #if buffer[-1] == '':
+        #    del buffer[-1]
         self.matrix = buffer
         for i in range(len(self.matrix)):
-            #self.matrix[i] = map(lambda x: x and x.isdigit() and int(x) or None,buffer[0])
             self.matrix[i] = map(lambda x: float(x),self.matrix[i])
 #            print(self.matrix[i])
 #        print(buffer)
@@ -58,7 +58,7 @@ class LDA:
         x1 = 0
         x2 = 0
         x3 = 0
-        for row in range(len(self.matrix)-1):
+        for row in range(len(self.matrix)):
             if self.matrix[row][3] == 1:
                 x1+=1
             if self.matrix[row][3] == 2:
@@ -67,8 +67,9 @@ class LDA:
                 x3+=1
         print(x1,x2,x3)
         
-        print(self.matrix)
-
+        for row in self.matrix:
+            print(row)
+            
 
     #def centroid():
 example = LDA("/Users/Shawn/Desktop/cs165b/HW2-6/testing.txt")
