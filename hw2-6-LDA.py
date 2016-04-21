@@ -97,9 +97,27 @@ class triclassify:
     def __init__(self,trainFile,testFile):
         self.classifer = LDA(trainFile).funcs
         self.applyToTest(testFile)
+        
+    def classify(self,dataPoint):
+        if (applyFunc(self.classifer[0]) > 0):
+            # might be B or C
+            if (applyFunc(self.classfier[2]) > 0):
+                return 3    # indicating C
+            else:
+                return 2    # indicating B        
+        else:
+            # might be A or C
+            if (applyFunc(self.classifer[1] > 0)):
+                return 3    # indicating C
+            else:
+                return 1    # indicating A
     def applyToTest(self,testFile):
-
-example = triclassify()
+        testData = np.loadtxt(testFile)
+        print(testData)
+        
+    #def applyFunc(self,listOfCoeffs,dataPoint):
+    
+example = triclassify("training.txt","testing.txt")
 #example = LDA("testing.txt")
 #example.centroid()
 
