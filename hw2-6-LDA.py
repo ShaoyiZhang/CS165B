@@ -65,22 +65,20 @@ class LDA:
             for i in range(self.metadata[cl+1]):
                 for p in range(self.p-1):
                     totalVector[p] += self.matrix[index][p]
-
                 index+=1
-
             meanMatrix.append(map(lambda col: col/self.metadata[cl+1] ,totalVector))
             totalVector = [0] * (self.p - 1)
-    
-#        self.matrix = np.matrix(self.matrix)
-        self.meanMatrix = meanMatrix
         
-    
+            #        self.matrix = np.matrix(self.matrix)
+        self.meanMatrix = meanMatrix
+            
+
     def midPoint(self,pointA,pointB):
         midPoint = []
         for coeff in range(len(pointA)):
             midPoint.append((pointA[coeff] + pointB[coeff])/2)
         return midPoint
-            
+
     def buildDiscFuncs(self):
         funcs = []
         mids = []
@@ -90,16 +88,15 @@ class LDA:
         mids.append(self.midPoint(self.meanMatrix[0],self.meanMatrix[1]))
         mids.append(self.midPoint(self.meanMatrix[0],self.meanMatrix[2]))
         mids.append(self.midPoint(self.meanMatrix[1],self.meanMatrix[2]))
-
-        for cl in range(self.metadata[0]): 
+        
+        for cl in range(self.metadata[0]):
             constant = 0
             for coeff in range(self.p-1):
                 constant -= funcs[cl][coeff] * mids[cl][coeff]
-            funcs[cl].append(constant)
+                funcs[cl].append(constant)
         self.funcs = funcs
 
-
-class triclassify:
+class triclassify:            
     def __init__(self,trainFile,testFile):
         self.classifer = LDA(trainFile).funcs
         self.applyToTest(testFile)
@@ -122,7 +119,7 @@ class triclassify:
         print(self.matrix)
         
     #def applyFunc(self,listOfCoeffs,dataPoint):
-    
+
 example = triclassify("training.txt","testing.txt")
 #example = LDA("testing.txt")
 #example.centroid()
