@@ -116,9 +116,49 @@ class triclassify:
                 return 1    # indicating A
     def applyToTest(self,testFile):
         txtToMatrix(self,testFile)
-        print(self.matrix)
-        
-    #def applyFunc(self,listOfCoeffs,dataPoint):
+        #print(self.matrix)
+        predict = -1
+        index = 0
+        positive = 0
+        negative = 0
+        trueP = 0
+        trueN = 0
+        falseP = 0
+        falseN = 0
+        for cl in range(self.numOfClass):
+            positive = cl
+            for clRange in range(self.metadata[cl+1]): 
+                predict = self.classify(self.matrix[index])
+                if (predict == positive):
+                    positive += 1
+                    if ((self.matrix[index][self.p-1]) == predict):
+                        trueP += 1
+                    else:
+                        falseP += 1
+                else:
+                    negative += 1
+                    if ((self.matrix[index][self.p-1]) == predict):
+                        trueN += 1
+                    else:
+                        falseN += 1
+                truePositiveRate = 0
+                falsePositiveRate = 0
+                errorRate = (falseN * falseP)/(self.metadata[cl+1])
+                accuracy = 1 - errorRate
+
+    def result(self):
+        truePositiveRate = 0
+        falsePositiveRate = 0
+        errorRate = (self.falseN + self.falseP)/(self.n)
+        #accuracy = (self.)
+
+# Helper
+def applyFunc(self,listOfCoeffs,dataPoint):
+    sum = 0
+    for indexOfCoeff in range(len(listOfCoeffs)):
+        for indexOfFeature in range(len(dataPoint)):
+            sum += listOfCoeffs[indexOfCoeff] + dataPoint[indexOfFeature]
+    return sum 
 
 example = triclassify("training.txt","testing.txt")
 #example = LDA("testing.txt")
