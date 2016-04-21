@@ -78,23 +78,41 @@ class LDA:
         for coeff in range(len(pointA)):
             midPoint.append((pointA[coeff] + pointB[coeff])/2)
         return midPoint
-
+    
+    def normalVec(self,centroid1,centroid2)
+        normVec = []
+        euclidianDis = 0
+        for indexOfFeature in range(self.p-1):
+            normVec.append(centroid2[indexOfFeature] - centroid1[indexOfFeature])
+            euclidianDist += (centroid2[indexOfFeature] - centroid1[indexOfFeature])**2
+        for scaler in normVec:
+            scaler = scaler/(2*euclidianDist)
+        return normVec
+    
     def buildDiscFuncs(self):
         funcs = []
         mids = []
-        funcs.append(np.cross(self.meanMatrix[0],self.meanMatrix[1]).tolist())
-        funcs.append(np.cross(self.meanMatrix[0],self.meanMatrix[2]).tolist())
-        funcs.append(np.cross(self.meanMatrix[1],self.meanMatrix[2]).tolist())
+        normVecs = []
+        
         mids.append(self.midPoint(self.meanMatrix[0],self.meanMatrix[1]))
         mids.append(self.midPoint(self.meanMatrix[0],self.meanMatrix[2]))
         mids.append(self.midPoint(self.meanMatrix[1],self.meanMatrix[2]))
-        
+        # A/B A/C B/C
+
+        normVecs.append(normalVec(self.meanMatrix[0],self.meanMatrix[1]))
+        normVecs.append(normalVec(self.meanMatrix[0],self.meanMatrix[2]))
+        normVecs.append(normalVec(self.meanMatrix[1],self.meanMatrix[2]))
+        # A/B A/C B/C
+
+        funcs = normVecs
+
+        sum = 0
         for cl in range(self.metadata[0]):
-            constant = 0
-            for coeff in range(self.p-1):
-                constant -= funcs[cl][coeff] * mids[cl][coeff]
-                funcs[cl].append(constant)
-        self.funcs = funcs
+            sum = 0
+            for index in range(self.p - 1):
+                sum -= (mids[cl][index]*normVec[cl][index])
+            funcs[cl].append(sum)
+            sum = 0
 
 class triclassify:            
     def __init__(self,trainFile,testFile):
@@ -114,6 +132,7 @@ class triclassify:
                 return 3    # indicating C
             else:
                 return 1    # indicating A
+            
     def applyToTest(self,testFile):
         txtToMatrix(self,testFile)
         #print(self.matrix)
@@ -145,7 +164,9 @@ class triclassify:
                 falsePositiveRate = 0
                 errorRate = (falseN * falseP)/(self.metadata[cl+1])
                 accuracy = 1 - errorRate
-
+        print("positive: ",positive)
+        print("negative: ",negative)
+        
     def result(self):
         truePositiveRate = 0
         falsePositiveRate = 0
@@ -153,11 +174,13 @@ class triclassify:
         #accuracy = (self.)
 
 # Helper
-def applyFunc(self,listOfCoeffs,dataPoint):
+def applyFunc(self,func,dataPoint):
     sum = 0
-    for indexOfCoeff in range(len(listOfCoeffs)):
-        for indexOfFeature in range(len(dataPoint)):
-            sum += listOfCoeffs[indexOfCoeff] + dataPoint[indexOfFeature]
+    # last index of func is a constant
+    # others are coefficients
+    for indexOfCoeff in range(len(func)-1):
+        sum += func[indexOfCoeff] * dataPoint[indexOfCoeff]
+    sum += func[-1]
     return sum 
 
 example = triclassify("training.txt","testing.txt")
