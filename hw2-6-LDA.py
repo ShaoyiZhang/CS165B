@@ -1,50 +1,56 @@
 from math import *
 import numpy as np
+
+
+def txtToMatrix(self,filename):
+    infile = open(filename,'r')
+    buffer = infile.read()
+    buffer = buffer.split('\n')
+    buffer = map(lambda row: row.split(),buffer)
+    self.metadata = buffer[0]
+    self.metadata = map(lambda x: x and x.isdigit() and int(x) or None,buffer[0])
+        
+    # index 0: the # of classes in the test set
+    # index 1-n: the # of data point in each class
+    
+    self.numOfClass = self.metadata[0]
+    del buffer[0]
+    del buffer[-1]
+    
+    self.matrix = buffer
+    for i in range(len(self.matrix)):
+        self.matrix[i] = map(lambda x: float(x),self.matrix[i])
+            
+    index = 0
+    startOfClass = 0
+    endOfClass = 0
+            
+    for cl in range(self.numOfClass):
+        for ele in range(self.metadata[cl+1]):
+            self.matrix[index].append(cl+1)
+            index+=1
+                
+                
+    # matrix is a n*p dimensional matrix
+    # n = # of data points
+    # p = # of columns
+    # p-1 = number of attributes
+    # last column is a numeric label
+
+    self.n = len(self.matrix)
+    if (self.n>1):
+        self.p = len(self.matrix[0])
+    else:
+        self.p = 0
+
+    
+    
 class LDA:
     def __init__(self,filename):
-        self.txtToMatrix(filename)
+        txtToMatrix(self,filename)
         self.centroid()
         self.buildDiscFuncs()
-    def txtToMatrix(self,filename):
-        infile = open(filename,'r')
-        buffer = infile.read()
-        buffer = buffer.split('\n')
-        buffer = map(lambda row: row.split(),buffer)
-        self.metadata = buffer[0]
-        self.metadata = map(lambda x: x and x.isdigit() and int(x) or None,buffer[0])
-        
-        # index 0: the # of classes in the test set
-        # index 1-n: the # of data point in each class
-
-        self.numOfClass = self.metadata[0]
-        del buffer[0]
-        del buffer[-1]
-
-        self.matrix = buffer
-        for i in range(len(self.matrix)):
-            self.matrix[i] = map(lambda x: float(x),self.matrix[i])
-
-        index = 0
-        startOfClass = 0
-        endOfClass = 0
-        
-        for cl in range(self.numOfClass):
-            for ele in range(self.metadata[cl+1]):
-                self.matrix[index].append(cl+1)
-                index+=1
-            
-
-        # matrix is a n*p dimensional matrix
-        # n = # of data points
-        # p = # of columns
-        # p-1 = number of attributes
-        # last column is a numeric label
-
-        self.n = len(self.matrix)
-        if (self.n>1):
-            self.p = len(self.matrix[0])
-        else:
-            self.p = 0
+        print(self.matrix)
 
     def centroid(self):
         index = 0
@@ -112,8 +118,8 @@ class triclassify:
             else:
                 return 1    # indicating A
     def applyToTest(self,testFile):
-        testData = np.loadtxt(testFile)
-        print(testData)
+        txtToMatrix(self,testFile)
+        print(self.matrix)
         
     #def applyFunc(self,listOfCoeffs,dataPoint):
     
