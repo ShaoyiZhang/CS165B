@@ -139,68 +139,88 @@ class triclassify:
         txtToMatrix(self,testFile)
         #print(self.matrix)
         predict = -1
-        index = 0
-        positive = 0
-        negative = 0
-        trueP = 0
-        trueN = 0
-        falseP = 0
-        falseN = 0
+        PA,PB,PC,NA,NB,NC = 0.0,0.0,0.0,0.0,0.0,0.0
+        TPA,TPB,TPC = 0.0,0.0,0.0
+        FPA,FPB,FPC = 0.0,0.0,0.0
+        TNA,TNB,TNC = 0.0,0.0,0.0
+        FNA,FNB,FNC = 0.0,0.0,0.0
         
         self.result = []
-        for cl in range(self.numOfClass):
-            trueClass = cl+1
-            for clRange in range(self.metadata[cl+1]): 
-                predict = self.classify(self.matrix[index])
-                print("predict: ", predict,"\n")
-                if (predict == trueClass):
-                    positive += 1
-                    if ((self.matrix[index][self.p-1]) == predict):
-                        trueP += 1
-                    else:
-                        falseP += 1
+        
+        for index in range(self.n):
+            trueClass = self.matrix[index][3]
+            predict = self.classify(self.matrix[index])
+            if (predict == 1):
+                PA += 1
+                NB+=1
+                NC+=1
+                if (trueClass == 1):
+                    TPA+=1
+                    TNB+=1
+                    TNC+=1 
+                elif (trueClass == 2):
+                    FPA+=1
+                    FNB+=1
+                    TNC+=1
                 else:
-                    negative += 1
-                    if ((self.matrix[index][self.p-1]) == predict):
-                        trueN += 1
-                    else:
-                        falseN += 1
-                index += 1
-            oneClass = []
-            print(oneClass)
-            if (positive == 0):
-                oneClass.append(0)
-            else:
-                oneClass.append(trueP/positive)   # true positive rate
-            if (negative == 0):
-                oneClass.append(0)
-            else:
-                oneClass.append(falseP/negative)  # false positive rate  
-            if ((positive + negative) == 0):
-                oneClass.append(0)
-            else:
-                oneClass.append((falseN + falseP)/(positive + negative)) # errorRate 
-            oneClass.append(1 - oneClass[2])      # accuracy
-            
-            print(oneClass)
-            
-            self.result.append(oneClass)
-            print("positive: ",positive)
-            print("negative: ",negative)
-            print("True positive",trueP)
-            print("false positive",falseP)
-            print("True negative",trueN)
-            print("false negative",falseN)           
-            positive = 0
-            negative = 0
-            trueP = 0
-            trueN = 0
-            falseP = 0
-            falseN = 0
-        #print(self.result)
-        '''
+                    FPA+=1
+                    TNB+=1
+                    FNC+=1
+            elif (predict == 2):
+                PB += 1
+                NA+=1
+                NC+=1
+                if (trueClass == 1):
+                    FNA+=1
+                    FPB+=1
+                    TNC+=1
+                elif (trueClass == 2):
+                    TNA+=1
+                    TPB+=1
+                    TNC+=1
+                else:
+                    TNA+=1
+                    FPB+=1
+                    FNC+=1
+            elif (predict == 3):
+                PC += 1
+                NA+=1
+                NB+=1
+                if (trueClass == 1):
+                    FNA+=1
+                    TNB+=1
+                    FPC+=1
+                elif (trueClass == 2):
+                    TNA+=1
+                    FNB+=1
+                    FPC+=1
+                else:
+                    TNA+=1
+                    TNB+=1
+                    TPC+=1
 
-        '''
+        print(TPA)
+        print(TPB)
+        print(TPC)
+        print(FNA)
+        print(FNB)
+        print(FNC)
+        TPRA = TPA/(TPA+FNA)
+        TPRB = TPB/(TPB+FNB)
+        print("TPB+FNB",TPB+FNB)
+        print("TPB")
+        TPRC = TPC/(TPC+FNC)
+        print(TPRA)
+        print(TPRB)
+        print(TPRC)
+        TPR = (TPRA+TPRB+TPRC)/3
+
+        print("tpr",TPR)
+        FPRA = FPA/(FPA+TNA)
+        FPRB = FPB/(FPB+TNB)
+        FPRC = FPC/(FPC+TNC)
+        FPR = (FPRA+FPRB+FPRC)/3
+        print("fpr",FPR)
         
     def result(self):
         truePositiveRate = 0
