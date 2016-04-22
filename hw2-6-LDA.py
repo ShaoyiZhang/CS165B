@@ -1,6 +1,6 @@
 from math import *
 import numpy as np
-
+import sys
 
 def txtToMatrix(self,filename):
     infile = open(filename,'r')
@@ -146,6 +146,8 @@ class triclassify:
         trueN = 0
         falseP = 0
         falseN = 0
+        
+        self.result = []
         for cl in range(self.numOfClass):
             trueClass = cl+1
             for clRange in range(self.metadata[cl+1]): 
@@ -163,20 +165,42 @@ class triclassify:
                         trueN += 1
                     else:
                         falseN += 1
-                truePositiveRate = 0
-                falsePositiveRate = 0
-                errorRate = (falseN * falseP)/(self.metadata[cl+1])
-                accuracy = 1 - errorRate
                 index += 1
+            oneClass = []
+            print(oneClass)
+            if (positive == 0):
+                oneClass.append(0)
+            else:
+                oneClass.append(trueP/positive)   # true positive rate
+            if (negative == 0):
+                oneClass.append(0)
+            else:
+                oneClass.append(falseP/negative)  # false positive rate  
+            if ((positive + negative) == 0):
+                oneClass.append(0)
+            else:
+                oneClass.append((falseN + falseP)/(positive + negative)) # errorRate 
+            oneClass.append(1 - oneClass[2])      # accuracy
+            
+            print(oneClass)
+            
+            self.result.append(oneClass)
+            print("positive: ",positive)
+            print("negative: ",negative)
+            print("True positive",trueP)
+            print("false positive",falseP)
+            print("True negative",trueN)
+            print("false negative",falseN)           
+            positive = 0
+            negative = 0
+            trueP = 0
+            trueN = 0
+            falseP = 0
+            falseN = 0
+        #print(self.result)
+        '''
 
-                
-        print("positive: ",positive)
-        print("negative: ",negative)
-        print("True positive",trueP)
-        print("false positive",falseP)
-        print("True negative",trueN)
-        print("false negative",falseN)
-
+        '''
         
     def result(self):
         truePositiveRate = 0
@@ -194,7 +218,12 @@ def applyFunc(self,func,dataPoint):
     sum += func[-1]
     return sum 
 
-example = triclassify("training.txt","testing.txt")
+if (len(sys.argv) != 3):
+    print("Error: Invalid Filename, Expectin 2 .txt file")
+else:
+    triclassify(sys.argv[1],sys.argv[2])
+
+#example = triclassify("training.txt","testing.txt")
 #example = LDA("testing.txt")
 #example.centroid()
 
