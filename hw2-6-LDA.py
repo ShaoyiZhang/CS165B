@@ -50,7 +50,7 @@ class LDA:
         txtToMatrix(self,filename)
         self.centroid()
         self.buildDiscFuncs()
-        #print(self.matrix)
+
 
     def centroid(self):
         index = 0
@@ -115,11 +115,12 @@ class LDA:
             sum = 0
 
         self.funcs = funcs
-        print(funcs)
+        #print(funcs)
 class triclassify:            
     def __init__(self,trainFile,testFile):
         self.classifier = LDA(trainFile).funcs
         self.applyToTest(testFile)
+        self.result()
         
     def classify(self,dataPoint):
         if (applyFunc(self,self.classifier[0],dataPoint) > 0):
@@ -145,7 +146,6 @@ class triclassify:
         TNA,TNB,TNC = 0.0,0.0,0.0
         FNA,FNB,FNC = 0.0,0.0,0.0
         
-        self.result = []
         
         for index in range(self.n):
             trueClass = self.matrix[index][3]
@@ -199,34 +199,27 @@ class triclassify:
                     TNB+=1
                     TPC+=1
 
-        print(TPA)
-        print(TPB)
-        print(TPC)
-        print(FNA)
-        print(FNB)
-        print(FNC)
         TPRA = TPA/(TPA+FNA)
         TPRB = TPB/(TPB+FNB)
-        print("TPB+FNB",TPB+FNB)
-        print("TPB")
         TPRC = TPC/(TPC+FNC)
-        print(TPRA)
-        print(TPRB)
-        print(TPRC)
-        TPR = (TPRA+TPRB+TPRC)/3
+        self.TPR = (TPRA+TPRB+TPRC)/3
 
-        print("tpr",TPR)
         FPRA = FPA/(FPA+TNA)
         FPRB = FPB/(FPB+TNB)
         FPRC = FPC/(FPC+TNC)
-        FPR = (FPRA+FPRB+FPRC)/3
-        print("fpr",FPR)
+        self.FPR = (FPRA+FPRB+FPRC)/3
+        P = PA+PB+PC
+        N = NA+NB+NC
+        self.ERROR = (FPA+FPB+FPC+FNA+FNB+FNC)/(P+N)
+        self.ACCUR = 1 - self.ERROR
+        self.PRECI = (TPA/PA + TPB/PB + TPC/PC)/3
         
     def result(self):
-        truePositiveRate = 0
-        falsePositiveRate = 0
-        errorRate = (self.falseN + self.falseP)/(self.n)
-        #accuracy = (self.)
+        print "True positive Rate = ","%.2f" % self.TPR
+        print "False positive Rate = ","%.2f" % self.FPR
+        print "Error rate = ","%.2f" % self.ERROR
+        print "Accuracy = ","%.2f" % self.ACCUR
+        print "Precision = ","%.2f" % self.PRECI
 
 # Helper
 def applyFunc(self,func,dataPoint):
