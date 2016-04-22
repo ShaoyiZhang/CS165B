@@ -50,7 +50,7 @@ class LDA:
         txtToMatrix(self,filename)
         self.centroid()
         self.buildDiscFuncs()
-        print(self.matrix)
+        #print(self.matrix)
 
     def centroid(self):
         index = 0
@@ -78,10 +78,10 @@ class LDA:
         for coeff in range(len(pointA)):
             midPoint.append((pointA[coeff] + pointB[coeff])/2)
         return midPoint
-    
-    def normalVec(self,centroid1,centroid2)
+
+    def normalVec(self,centroid1,centroid2):
         normVec = []
-        euclidianDis = 0
+        euclidianDist = 0
         for indexOfFeature in range(self.p-1):
             normVec.append(centroid2[indexOfFeature] - centroid1[indexOfFeature])
             euclidianDist += (centroid2[indexOfFeature] - centroid1[indexOfFeature])**2
@@ -99,9 +99,9 @@ class LDA:
         mids.append(self.midPoint(self.meanMatrix[1],self.meanMatrix[2]))
         # A/B A/C B/C
 
-        normVecs.append(normalVec(self.meanMatrix[0],self.meanMatrix[1]))
-        normVecs.append(normalVec(self.meanMatrix[0],self.meanMatrix[2]))
-        normVecs.append(normalVec(self.meanMatrix[1],self.meanMatrix[2]))
+        normVecs.append(self.normalVec(self.meanMatrix[0],self.meanMatrix[1]))
+        normVecs.append(self.normalVec(self.meanMatrix[0],self.meanMatrix[2]))
+        normVecs.append(self.normalVec(self.meanMatrix[1],self.meanMatrix[2]))
         # A/B A/C B/C
 
         funcs = normVecs
@@ -110,25 +110,27 @@ class LDA:
         for cl in range(self.metadata[0]):
             sum = 0
             for index in range(self.p - 1):
-                sum -= (mids[cl][index]*normVec[cl][index])
+                sum -= (mids[cl][index]*normVecs[cl][index])
             funcs[cl].append(sum)
             sum = 0
 
+        self.funcs = funcs
+        print(funcs)
 class triclassify:            
     def __init__(self,trainFile,testFile):
-        self.classifer = LDA(trainFile).funcs
+        self.classifier = LDA(trainFile).funcs
         self.applyToTest(testFile)
         
     def classify(self,dataPoint):
-        if (applyFunc(self.classifer[0]) > 0):
+        if (applyFunc(self,self.classifier[0],dataPoint) > 0):
             # might be B or C
-            if (applyFunc(self.classfier[2]) > 0):
+            if (applyFunc(self,self.classifier[2],dataPoint) > 0):
                 return 3    # indicating C
             else:
                 return 2    # indicating B        
         else:
             # might be A or C
-            if (applyFunc(self.classifer[1] > 0)):
+            if (applyFunc(self,self.classifier[1],dataPoint) > 0):
                 return 3    # indicating C
             else:
                 return 1    # indicating A
@@ -145,10 +147,11 @@ class triclassify:
         falseP = 0
         falseN = 0
         for cl in range(self.numOfClass):
-            positive = cl
+            trueClass = cl+1
             for clRange in range(self.metadata[cl+1]): 
                 predict = self.classify(self.matrix[index])
-                if (predict == positive):
+                print("predict: ", predict,"\n")
+                if (predict == trueClass):
                     positive += 1
                     if ((self.matrix[index][self.p-1]) == predict):
                         trueP += 1
@@ -164,8 +167,16 @@ class triclassify:
                 falsePositiveRate = 0
                 errorRate = (falseN * falseP)/(self.metadata[cl+1])
                 accuracy = 1 - errorRate
+                index += 1
+
+                
         print("positive: ",positive)
         print("negative: ",negative)
+        print("True positive",trueP)
+        print("false positive",falseP)
+        print("True negative",trueN)
+        print("false negative",falseN)
+
         
     def result(self):
         truePositiveRate = 0
