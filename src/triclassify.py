@@ -13,7 +13,7 @@ def txtToMatrix(self,filename):
     # index 0: the # of classes in the test set
     # index 1-n: the # of data point in each class
     
-    self.numOfClass = self.metadata[0]
+    self.numOfClass = 3
     del buffer[0]
     del buffer[-1]
     
@@ -22,15 +22,13 @@ def txtToMatrix(self,filename):
         self.matrix[i] = map(lambda x: float(x),self.matrix[i])
             
     index = 0
-
-    print self.metadata
-    for cl in range(3):
-        print(cl)
+    startOfClass = 0
+    endOfClass = 0
+            
+    for cl in range(self.numOfClass):
         for ele in range(self.metadata[cl+1]):
-            print(ele)
             self.matrix[index].append(cl+1)
             index+=1
-            print(index)
                 
                 
     # matrix is a n*p dimensional matrix
@@ -73,7 +71,7 @@ class LDA:
         
             #        self.matrix = np.matrix(self.matrix)
         self.meanMatrix = meanMatrix
-            
+        #print self.matrix
 
     def midPoint(self,pointA,pointB):
         midPoint = []
@@ -109,7 +107,7 @@ class LDA:
         funcs = normVecs
 
         sum = 0
-        for cl in range(self.metadata[0]):
+        for cl in range(self.numOfClass):
             sum = 0
             for index in range(self.p - 1):
                 sum -= (mids[cl][index]*normVecs[cl][index])
@@ -150,7 +148,7 @@ class triclassify:
         
         
         for index in range(self.n):
-            trueClass = self.matrix[index][3]
+            trueClass = self.matrix[index][self.p-1]
             predict = self.classify(self.matrix[index])
             if (predict == 1):
                 PA += 1
@@ -200,7 +198,7 @@ class triclassify:
                     TNA+=1
                     TNB+=1
                     TPC+=1
-
+        
         TPRA = TPA/(TPA+FNA)
         TPRB = TPB/(TPB+FNB)
         TPRC = TPC/(TPC+FNC)
