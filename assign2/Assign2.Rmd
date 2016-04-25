@@ -1,0 +1,133 @@
+---
+title: "CS165B Assignment 2"
+author: "Shaoyi Zhang"
+date: "April 22, 2016"
+output: pdf_document
+---
+
+## Problem 1.a
+number of errors = 8+0+1+0+0+0+0+0 = 9
+There are 9 ranking errors. 
+
+## Problem 1.b
+#### rank error rate = number of errors /(P*N) = 9 / (12 * (20 - 12)) = 0.09375
+
+## Problem 1.c
+#### rank accuracy = 1 - rank error rate = 1 - 0.09375 = 0.90625
+
+## Problem 1.d
+```{r}
+library(ggplot2)
+negative=c(0,0,0,0,0,0,1,1,2,3,3,4,5,6,7,8,8,9,10,11,12)
+positive=c(0,1,2,3,4,5,5,6,6,6,7,7,7,7,7,8,8,8,8,8,8)
+pt = data.frame(negative,positive)
+
+p <- ggplot(pt, aes(negative, positive))+xlim(0,12)+ylim(0,8)
+p + geom_point(size=3)
+```
+
+##Problem 2.a
+```{r,echo=FALSE}
+
+
+negative=c(0,0,1,3,6,10)
+positive=c(0,4,11,13,15,15)
+lab = data.frame(negative,positive)
+
+p <- ggplot(lab, aes(negative, positive))+xlim(0,10)+ylim(0,15)
+p + geom_point(size=3)
+```
+
+
+
+##Problem 3
+```{r}
+x1 = c(2,3,1,1,4,2,1,0,4,3,3)
+x2 = c(2,3,2,4,4,2,1,4,0,3,3)
+x3 = c(3,2,3,1,4,2,1,2,0,1,3)
+label = c("+","+","+","+","+","+","-","-","-","-","-")
+p3 = data.frame(x1,x2,x3,label)
+p3$classifer = p3$x1 * 2 + p3$x2 +3 * p3$x3
+p3$margin = (p3$classifer - 12)/sqrt(2^2 + 3^2 + 1)
+p3$zeroOneLoss[p3$margin<=0] = 1
+p3$zeroOneLoss[p3$margin>0] = 0
+p3$hinge = p3$margin
+p3$hinge[p3$margin>=1] = 0
+p3$hinge[p3$margin<1] = 1-p3$margin[p3$margin<1]
+p3$squareLoss = (p3$hinge)^2
+p3$squareLoss[p3$margin>1] = 0
+p3
+```
+
+
+## Problem 2.b
+```{r,echo=FALSE}
+negative=c(0,0,1,3,6,10)
+positive=c(0,4,11,13,15,15)
+negative = negative/15
+positive = positive/15
+
+roc = data.frame(negative,positive)
+p <- ggplot(roc, aes(negative, positive))+xlim(0,1)+ylim(0,1)
+p + geom_point(size=3)
+```
+
+## Problem 2.c
+##### Accuracy 
+ Hightest = C2,C3     Lowest = C0
+
+## Problem 2.d
+##### Average Recall
+ Highest = C2     Lowest = C0,C5
+
+## Problem 2.e
+C4, C5  A concept is complete if it covers all positive example. 
+
+## Problem 2.f
+C0, C1 A concept is consistent if it covers none of the negative examples.
+
+## Problem 4
+```{r}
+library(gridExtra)
+index = c(1,2,3,4,5)
+occurrence = c(2,4,8,0,11)
+freq = occurrence/25
+laplace = (occurrence+1)/(25+5)
+m5 = (occurrence+5/5)/(25+5)
+m20 = (occurrence+20/5)/(25+20)
+p4 = data.frame(index,freq,laplace,m5,m20)
+p4
+
+p4plot1 = ggplot(p4,aes(index,freq))+xlim(1,5)+ylim(0,1)+ geom_point(size = 3)
+
+p4plot2 = ggplot(p4,aes(index,laplace))+xlim(1,5)+ylim(0,1)+ geom_point(size = 3)
+
+p4plot3 = ggplot(p4,aes(index,m5))+xlim(1,5)+ylim(0,1)+ geom_point(size = 3)
+
+p4plot4 = ggplot(p4,aes(index,m20))+xlim(1,5)+ylim(0,1)+ geom_point(size = 3)
+
+grid.arrange(p4plot1,p4plot2,p4plot3,p4plot4)
+```
+
+##### As we increase pesudocount the probability distribution is flatten.
+
+
+## Problem 5.a
+```{r}
+T = 2^(4+2+3+4)
+T
+```
+## Problem 5.b
+```{r}  
+T = 1*(4+1)*(2+1)*(3+1)*(4+1)
+T
+```
+  
+## Problem 5.c
+```{r}
+T = 1*(2^4-1)*(2^2-1)*(2^3-1)*(2^4-1)
+T
+```
+
+
+
