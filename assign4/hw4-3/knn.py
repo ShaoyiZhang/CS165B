@@ -77,7 +77,7 @@ def knn(k,traindata,testdata):
         result += str(predictClass[ithTest])
         result += "\n"
 
-    print result
+    print result[0:-1]
 
 
 if (len(sys.argv) != 4):

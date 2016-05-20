@@ -114,7 +114,7 @@ def kerpercep(sigma, pos_train_file, neg_train_file, pos_test_file, neg_test_fil
     result = result + "False negatives: " + str(FN) + "\n"
     result = result + "Error rate: " +  "%2.f" % (float(FP+FN)/(P*N)*100) + "%"
 
-    print result
+    print result[0:-1]
 
 
 
