@@ -46,8 +46,7 @@ def mahadist(traindata,testdata):
     centroid = np.asmatrix(centroid)
 
     mahadistance = []
-    #print cov 
-    #print testMeta[0]
+
 
     distVec = []
     for ithRow in range(testMeta[0]):
@@ -77,12 +76,6 @@ def mahadist(traindata,testdata):
         result += str(distVec[ithTest])
         result += "\n"
     print result[0:-1]
-    #xMinusY = np.asmatrix(test) - np.asmatrix(test)
-    #print xMinusY
-    #print np.transpose(xMinusY).dot(inv(cov)).dot(xMinusY)
-    #result = math.sqrt()
-    #print mahadistance
-#def construct
 
 if (len(sys.argv) != 3):
     print("Error: Invalid Filename, Expectin 2 .txt file")
