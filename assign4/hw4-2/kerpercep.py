@@ -8,7 +8,6 @@ def parseX(data):
     x = [map(float,ele) for ele in x]
     x = [map(row.reverse(),row) for row in x]
     x = [map(row.append(1),row) for row in x]
-    #x = map((lambda row: row.reverse()), x)# for ele in x]
     return x
     
 def kernelFunc(pointA,pointB,sigma):
