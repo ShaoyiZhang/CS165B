@@ -13,34 +13,19 @@ def mahadist(traindata,testdata):
     for i in range(trainMeta[0]):
         train[i] = map(lambda attr: float(attr), train[i])
 
-    # why last number is str????
-  
-    
-    
-    #train[trainMeta[0]-1][trainMeta[1]-1] = float(train[trainMeta[0]-1][trainMeta[1]-1])
-    
-    #for row in train:
-    #    print type(row[0])
-    #    print type(row[1])
-    #.replace('\n',';')
-    #print train
-
     test = open(testdata,"rt")
     testMeta = map(int,test.readline().split())
     test = test.read().split('\n')
-
+    
  
     test = map(lambda row: row.split(), test)
     for i in range(testMeta[0]):
         test[i] = map(lambda attr: float(attr), test[i])  
+    testNonMatrix = test
     test = np.asmatrix(test)
-    #print test
     # since we already used readline function once
     # the file pointer is on the second line, which is desired
-    #train = np.asmatrix(train)
-    #test = np.matrix(test)
-    #print train[0][1]
-    #
+
     
     # compute centroid of training points
     centroid = [0.0] * trainMeta[1]
@@ -49,46 +34,49 @@ def mahadist(traindata,testdata):
             centroid[jthAttribute] = centroid[jthAttribute] + train[ithRow][jthAttribute]
     for i in range(trainMeta[1]):
         centroid[i] = centroid[i] / trainMeta[0]
-    #print centroid
-    
-    
-    # we also need the centroid of the test data
-    #centroidTest = [0.0] * testMeta[1]
-    #for ithRow in range(testMeta[0]):
-    #    for jthAttribute in range(testMeta[1]):
-    #        centroidTest[jthAttribute] = centroidTest[jthAttribute] + test[ithRow][jthAttribute]
-    #for i in range(testMeta[1]):
-    #    centroidTest[i] = centroidTest[i] / testMeta[0]
     
     # minus the X(train) with centroidTest, we will get zero-centered xrange
     trainT = np.transpose(np.asmatrix(train))
-    print ""
     meanMatrix = np.transpose(np.asmatrix([centroid]*trainMeta[0]))
     trainZ = trainT - meanMatrix
-    #for ithRow in range(trainMeta[0]):
-    #    row = []
-    #    for jthAttribute in range(trainMeta[1]):
-    #        row.append(train[ithRow][jthAttribute]/centroid[jthAttribute])
-    #    trainZ.append(row)
-    print trainZ.shape
-    # find the covariance matrix
-    
-    #trainZ = np.asmatrix(trainZ)
     
     scatter = trainZ.dot(np.transpose(trainZ)) 
     
     cov = scatter / trainMeta[0]
     centroid = np.asmatrix(centroid)
-    #centroidMatrix = [centroid]*testMeta[0]
-    mahadistance = []
-    print cov 
-    print testMeta[0]
 
+    mahadistance = []
+    #print cov 
+    #print testMeta[0]
+
+    distVec = []
     for ithRow in range(testMeta[0]):
-        #print "test - centroid" 
-        #print np.transpose(test[ithRow])
-        #print np.transpose(test[i]-centroid)
-        print math.sqrt(np.transpose(np.transpose(test[ithRow]-centroid)).dot(inv(cov)).dot(np.transpose(test[ithRow]-centroid)))
+        distVec.append(math.sqrt(np.transpose(np.transpose(test[ithRow]-centroid)).dot(inv(cov)).dot(np.transpose(test[ithRow]-centroid))))
+    distVec = map((lambda x: "%.2f" %  x),distVec)
+    centroid = np.asarray(centroid)[0]
+    #print cov
+    centroid = map((lambda x: "%.2f" %  x),centroid)
+
+    cov = np.asarray(cov)
+    #print cov
+    result = "Centroid:\n"
+    result = result + " ".join(centroid) + "\n" + "Covariance Matrix: \n"
+    for i in range(trainMeta[1]):
+        cov[i] = np.asarray(cov[i])
+        for j in range(trainMeta[1]):
+            result += "%.2f " % cov[i][j]
+        result += "\n"
+    result += "Distances: \n"
+    for ithTest in range(testMeta[0]):
+        result += str(ithTest+1)
+        result += ". "
+        for jthAttr in range(testMeta[1]):
+            result += "%.1f" % testNonMatrix[ithTest][jthAttr]
+            result += " "
+        result += "-- "
+        result += str(distVec[ithTest])
+        result += "\n"
+    print result[0:-1]
     #xMinusY = np.asmatrix(test) - np.asmatrix(test)
     #print xMinusY
     #print np.transpose(xMinusY).dot(inv(cov)).dot(xMinusY)
