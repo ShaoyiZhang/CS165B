@@ -25,7 +25,7 @@ def knn(k,traindata,testdata):
     meta = [None]*2
     meta[0] = map(int,train.readline().split())    
     meta[1] = map(int,test.readline().split())
-    print meta
+    #print meta
     train = parseX(train)
     test = parseX(test)
     # figure out number of classes
@@ -34,7 +34,7 @@ def knn(k,traindata,testdata):
         classes.add(train[i][meta[0][1]])
     nclass = len(classes)
 
-    #distMatrix = []
+    predictClass = []
     for ithTest in range(meta[1][0]):
         distVec = []
         # calculate distance between test point and all points in the training data
@@ -42,6 +42,7 @@ def knn(k,traindata,testdata):
             distVec.append([ distance(test[ithTest],train[jthTrain]), int(train[jthTrain][meta[0][1]]) ])
         #print "Unsorted: ", distVec
         distVec = sorted(distVec, key = lambda x: x[0])
+        #print "Sorted: ", distVec
 
         occurrence = [0]*nclass
         for knn in range(int(k)):
@@ -59,13 +60,25 @@ def knn(k,traindata,testdata):
                 maxFreqClass = ithClass
         #print maxFreqClass
         maxFreqClass += 1
-        print maxFreqClass
+        #print maxFreqClass
         #print
-        print
+        #print
+        predictClass.append(maxFreqClass)
 
+    # then we need to print the result
+    result = ""
+    for ithTest in range(meta[1][0]):
+        result += str(ithTest+1)
+        result += ". "
+        for jthAttr in range(meta[1][1]):
+            result += "%.1f" % test[ithTest][jthAttr]
+            result += " "
+        result += "-- "
+        result += str(predictClass[ithTest])
+        result += "\n"
 
-        #print "Sorted: ", distVec
-        #distMatrix.append(distVec)
+    print result
+
 
 if (len(sys.argv) != 4):
     print("Error: Invalid Filename, Expectin 2 .txt file")
