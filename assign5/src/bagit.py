@@ -32,29 +32,94 @@ class bagging:
         #self.buildClassifier(self.train[0:(self.meta[0][1])], self.train[self.meta[0][1]:])
         #self.applyToTest(self.test, self.classifers[0], self.meta[1][0],self.meta[1][1])
         # preparation finished
-
-        self.bagging(int(numOfSample), int(sizeOfSample))
+        self.numOfSample = int(numOfSample)
+        self.sizeOfSample = int(sizeOfSample)
+        self.bagging(self.numOfSample, self.sizeOfSample)
 
     def bagging(self,numOfSample, sizeOfSample):
+        classifers = []
+        result = []
+        self.bootstrapSamples = [] # save for printing result
         for ithBootstrap in range(numOfSample):
-            indices = np.random.randint(low = 0, high = sizeOfSample, size=sizeOfSample)
+            indices = np.random.randint(low = 0, high = (self.meta[0][1] + self.meta[0][2]) , size=sizeOfSample)
             train = [self.train[i] for i in indices]
+            self.bootstrapSamples.append(train)
             train_pos = []
             train_neg = []
+            ithClassifier = None
             for point in train:
                 if point[self.dimension] == 1:
                     train_pos.append(point)
                 else:
                     train_neg.append(point)
-            self.buildClassifier(train_pos,train_neg)
+            if train_pos == []:
+                ithClassifier = "ALL POSITIVE"
+            elif train_neg == []:
+                ithClassifier = "ALL NEGATIVE"
+            else:
+                ithClassifier = self.buildClassifier(train_pos,train_neg)
+            classifers.append(ithClassifier)
+
+            resultOneSample = self.applyToTest(self.test,ithClassifier)
+            result.append(resultOneSample)
+        #print result
+        self.result = self.majorityVote(result)
+        self.evaluation()
+
+    def majorityVote(self,predictMatrix):
+        result = []
+        P,N,FP,FN = 0,0,0,0
+        for ithTest in range(self.meta[1][1] + self.meta[1][2]):
+            pos,neg = 0,0
+            for jthBootstrap in range(len(predictMatrix)):
+                if (predictMatrix[jthBootstrap][ithTest] == 1):
+                    pos+=1
+                else:
+                    neg+=1
+            if pos >= neg:
+                result.append(1)
+                P += 1
+                self.test[ithTest].append("True")
+                if (self.test[ithTest][self.dimension] == -1):
+                    FP += 1
+                    self.test[ithTest].append("(false positive)")
+                    #print "FP!!!!!!"
+                else:
+                    self.test[ithTest].append("(correct)")
+            else:
+                result.append(-1)
+                N += 1
+                self.test[ithTest].append("False")
+                if (self.test[ithTest][self.dimension] == 1):
+                    FN += 1
+                    self.test[ithTest].append("(false negative)")
+                else:
+                    self.test[ithTest].append("(correct)")
+                    #print "FN!!!!!!"
+                        #if (predict < 0): ######predict positive########## condition@!!@!!!!
+                #    P += 1
+                #    if actual == 0:
+                #        FP += 1
+                #else:
+                #    N += 1
+                #    if actual == 1:
+                #        FN += 1
+        self.statistics = [P,N,FP,FN]
+        return result
 
     def addLabel(self,dataSet,metaPos):
         for ithPoint in range(len(dataSet)):
             if (ithPoint < metaPos):
                 dataSet[ithPoint].append(1)
             else:
-                dataSet[ithPoint].append(0)
+                dataSet[ithPoint].append(-1)
         return dataSet
+
+    def convertLabel(self,label):
+        if label == 1:
+            return "True"
+        else:
+            return "False"
 
     def buildClassifier(self,positives,negatives):
         #print "gg"
@@ -74,7 +139,7 @@ class bagging:
             scalar -= (midPoint[ithAttr]*normalVec[ithAttr])
         func.append(scalar)
 
-        self.classifers.append(func)
+        return func
 
     def centroid(self,data):
         centroid = [0.0]*self.dimension
@@ -97,22 +162,46 @@ class bagging:
             normalVec[ithAttr] = pointB[ithAttr] - pointA[ithAttr]
         return normalVec
 
-    def applyToTest(self,testData,classifer,testPos,testNeg):
-        P,N,FP,FN = 0,0,0,0
-        label = 0
-        for ithTest in range(len(testData)):
-            label = applyFunc(classifer,testData[ithTest])
-            '''
-            if (label < 0): ################ condition@!!@!!!!
-                P += 1
-                if not ((ithTest > nobs) and (ithTest < nobs + meta[2][0])):
-                    FP += 1
+    def applyToTest(self,testData,classifer):
+        #actual = -1
+        predict = -1
+        predictResult = []
+        if isinstance(classifer,list): 
+            for ithTest in testData:
+                #actual = ithTest[self.dimension]
+                predict = sign(applyFunc(classifer,ithTest))
+                predictResult.append(predict)
+            return predictResult
+        elif isinstance(classifer,str):
+            if classifer == "ALL POSITIVE":
+                return [1]*len(testData)
             else:
-                N += 1
-                if (ithTest > nobs) and (ithTest < nobs + meta[2][0]):
-                    FN += 1
-            '''
-            print label,ithTest
+                return [0]*len(testData)
+        else:
+            print("Error! Wrong classifier!")
+            
+    def evaluation(self):
+        output = ""
+        output += "Positive examples: " + str(self.statistics[0]) + "\n"
+        output += "Negative examples: " + str(self.statistics[1]) + "\n"
+        output += "False positives: " + str(self.statistics[2]) + "\n"
+        output += "False negatives: " + str(self.statistics[3]) + "\n"
+        #print self.bootstrapSamples[0][0][0]
+        #print "%.2f" % self.bootstrapSamples[0][0][0]
+        if (sys.argv[1] == "-v"):
+            for ithBootstrap in range(self.numOfSample):
+                output += "\nBootstrap sample set " + str(ithBootstrap+1) + "\n"
+                for jthData in range(self.sizeOfSample):
+                    output += " ".join(map((lambda x:  "%.2f" % x), self.bootstrapSamples[ithBootstrap][jthData][0:-1])) + " "
+                    output += self.convertLabel(self.bootstrapSamples[ithBootstrap][jthData][-1]) + "\n"
+                #output += "\n"
+            output += "\nClassification: "
+            for ithTest in self.test:
+                output += "\n" + " ".join(map((lambda x:  "%.2f" % x), ithTest[0:-3])) + " "
+                output += ithTest[self.dimension+1] + " "
+                output += ithTest[self.dimension+2]
+
+        print output
 
 # Helper method
 def applyFunc(func,dataPoint):
@@ -122,13 +211,18 @@ def applyFunc(func,dataPoint):
     for indexOfCoeff in range(len(func)-1):
         sum += func[indexOfCoeff] * dataPoint[indexOfCoeff]
     sum += func[-1]
-    return sum 
+    return sum
 
+def sign(predict):
+    if (predict >= 0.0): # negative class
+        return -1
+    else:
+        return 1
 
 
 if (len(sys.argv) == 6):
     # verbose
-    pass
+    bagging(sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5])
 elif (len(sys.argv) == 5):
     bagging(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
     # numOfSample, sizeOfSample, trainData, testData

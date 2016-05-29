@@ -35,7 +35,7 @@ def mahadist(traindata,testdata):
     for i in range(trainMeta[1]):
         centroid[i] = centroid[i] / trainMeta[0]
     
-    # minus the X(train) with centroidTest, we will get zero-centered xrange
+    # minus the X(train) with centroidTest, we will get zero-centered x
     trainT = np.transpose(np.asmatrix(train))
     meanMatrix = np.transpose(np.asmatrix([centroid]*trainMeta[0]))
     trainZ = trainT - meanMatrix
