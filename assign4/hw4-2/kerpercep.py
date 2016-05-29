@@ -12,16 +12,9 @@ def parseX(data):
     
 def kernelFunc(pointA,pointB,sigma):
     norm = 0.0
-    #print type(sigma)
-
-    #print pointA[0]
-    #print pointB[0]
     for ithAttr in range(len(pointA)):
         norm = norm + (pointA[ithAttr] - pointB[ithAttr]) ** 2
-    #norm = math.sqrt(norm)
-    #print norm
     kernel = math.exp(-norm/(2*sigma**2))
-    #print kernel
     return kernel
 
 def kerpercep(sigma, pos_train_file, neg_train_file, pos_test_file, neg_test_file):
@@ -42,35 +35,18 @@ def kerpercep(sigma, pos_train_file, neg_train_file, pos_test_file, neg_test_fil
     meta[3] = map(int,neg_test.readline().split())
     meta[3].append(-1)
 
-    #print meta
     x = []
-    #x.append(np.array(pos_train.read()))
-    #x.append(np.array(neg_train.read()))
-    #xpos = pos_train.read().split("\n")
-    #xpos = map((lambda row: row.split()),xpos)
-    #xpos = [map(float,x) for x in xpos]
     xpos = parseX(pos_train)
     xneg = parseX(neg_train)
     x = xpos + xneg
-
     xTest = parseX(pos_test) + parseX(neg_test)
-    #print x
-    #x = np.asmatrix(x)
-    #x = np.concatenate(([xpos],[xneg]),axis=0)
-    #x = np.concatenate((np.array(pos_train.read()),np.array(neg_train.read())),axis=0)
-    #np.concatenate( list(np.array(pos_train.read())).append(np.array(neg_train.read())), axis = 0 )
-    #print x
-    #print np.array(neg_train.read())
     y = []
     for metaRow in meta:
         for ithData in range(metaRow[0]):   # num of obs in one of the four data set
             y.append(metaRow[2])
-    #print y 
 
     # nobs = number of observations in Training data
     nobs = meta[0][0] + meta[1][0]
-
-    #print "nobs: ", nobs
 
     alpha = [0] * nobs
     converged = False
@@ -79,10 +55,8 @@ def kerpercep(sigma, pos_train_file, neg_train_file, pos_test_file, neg_test_fil
         for i in range(nobs):
             decision = 0.0
             for j in range(nobs):
-                #decision = decision + alpha[j]*y[i]*(x[j].dot(np.transpose(x[i])))
                 decision = decision + alpha[j] * y[j] * kernelFunc(x[i],x[j],sigma)
             decision = decision * y[i]
-            #print decision
             if (decision <= 0):
                 alpha[i] = alpha[i] + 1
                 converged = False
@@ -92,9 +66,6 @@ def kerpercep(sigma, pos_train_file, neg_train_file, pos_test_file, neg_test_fil
     for ithTest in range(len(xTest)):
         label = 0
         for jthTrain in range(nobs):
-            #print type(alpha[jthTrain])
-            #print type(x[jthTrain])
-            #print type(kernelFunc(xTest[ithTest],x[jthTrain],sigma))
 
             label += alpha[jthTrain] * y[jthTrain] * kernelFunc(xTest[ithTest],x[jthTrain],sigma)
         if (label > 0):
@@ -106,22 +77,16 @@ def kerpercep(sigma, pos_train_file, neg_train_file, pos_test_file, neg_test_fil
             if (ithTest > nobs) and (ithTest < nobs + meta[2][0]):
                 FN += 1
 
-    # need to print result"%2.f" %
     alpha = map((lambda a: str(a)),alpha)
     result = ""
-    result = result + "Alphas: " + " ".join(alpha) + "\n"
-    result = result + "False positives: " + str(FP) + "\n"
-    result = result + "False negatives: " + str(FN) + "\n"
-    result = result + "Error rate: " +  "%2.f" % (float(FP+FN)/(P*N)*100) + "%"
+    result += "Alphas: " + " ".join(alpha) + "\n"
+    result += "False positives: " + str(FP) + "\n"
+    result += "False negatives: " + str(FN) + "\n"
+    result += "Error rate: " +  "%2.f" % (float(FP+FN)/(P*N)*100) + "%"
 
     print result[0:-1]
-
-
-
 
 if (len(sys.argv) != 6):
     print("Error: Invalid Filename, Expectin 2 .txt file")
 else:
     kerpercep(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5])
-
-

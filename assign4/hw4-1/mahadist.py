@@ -4,21 +4,17 @@ import sys
 import math
 
 def mahadist(traindata,testdata):
-
     train = open(traindata,"rt")
     trainMeta = map(int,train.readline().split())
     train = train.read().split('\n')
-
     train = map(lambda row: row.split(), train)
     for i in range(trainMeta[0]):
         train[i] = map(lambda attr: float(attr), train[i])
-
     test = open(testdata,"rt")
     testMeta = map(int,test.readline().split())
     test = test.read().split('\n')
-    
- 
     test = map(lambda row: row.split(), test)
+
     for i in range(testMeta[0]):
         test[i] = map(lambda attr: float(attr), test[i])  
     testNonMatrix = test
@@ -26,7 +22,6 @@ def mahadist(traindata,testdata):
     # since we already used readline function once
     # the file pointer is on the second line, which is desired
 
-    
     # compute centroid of training points
     centroid = [0.0] * trainMeta[1]
     for ithRow in range(trainMeta[0]):
@@ -46,8 +41,6 @@ def mahadist(traindata,testdata):
     centroid = np.asmatrix(centroid)
 
     mahadistance = []
-
-
     distVec = []
     for ithRow in range(testMeta[0]):
         distVec.append(math.sqrt(np.transpose(np.transpose(test[ithRow]-centroid)).dot(inv(cov)).dot(np.transpose(test[ithRow]-centroid))))

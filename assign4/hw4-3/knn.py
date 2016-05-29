@@ -1,5 +1,4 @@
 # k nearest neighbour
-
 import numpy as np
 import sys
 import math
@@ -8,10 +7,8 @@ def parseX(data):
     x = data.read().split("\n")
     x = map((lambda row: row.split()),x)
     x = [map(float,ele) for ele in x]
-    #x = [map(row.reverse(),row) for row in x]
-    #x = [map(row.append(1),row) for row in x]
-    #print x
     return x
+
 def distance(pointA,pointB):
     norm = 0.0
     for ithAttr in range(len(pointA)):
@@ -40,16 +37,13 @@ def knn(k,traindata,testdata):
         # calculate distance between test point and all points in the training data
         for jthTrain in range(meta[0][0]):
             distVec.append([ distance(test[ithTest],train[jthTrain]), int(train[jthTrain][meta[0][1]]) ])
-        #print "Unsorted: ", distVec
         distVec = sorted(distVec, key = lambda x: x[0])
-        #print "Sorted: ", distVec
 
         occurrence = [0]*nclass
         for knn in range(int(k)):
             # label 1 ~ nclass
             # index 0 ~ nclass-1
             occurrence[distVec[knn][1] - 1] += 1
-        #print "occurrence: ", occurrence
 
         # find the most frequent class in occurrence array
         maxFreq = occurrence[0]
@@ -58,11 +52,8 @@ def knn(k,traindata,testdata):
             if (occurrence[ithClass]>maxFreq):
                 maxFreq = occurrence[ithClass]
                 maxFreqClass = ithClass
-        #print maxFreqClass
         maxFreqClass += 1
-        #print maxFreqClass
-        #print
-        #print
+
         predictClass.append(maxFreqClass)
 
     # then we need to print the result
@@ -84,5 +75,3 @@ if (len(sys.argv) != 4):
     print("Error: Invalid Filename, Expectin 2 .txt file")
 else:
     knn(sys.argv[1],sys.argv[2],sys.argv[3])
-
-

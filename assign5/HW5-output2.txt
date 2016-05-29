@@ -1,0 +1,86 @@
+Positive examples: 19
+Negative examples: 21
+False positives: 1
+False negatives: 2
+
+Bootstrap sample set 1
+0.64 0.48 0.15 True
+-0.81 0.79 0.85 False
+0.37 -0.84 0.73 False
+0.39 -0.14 0.03 False
+0.72 0.53 0.11 True
+0.24 0.53 0.09 True
+
+Bootstrap sample set 2
+0.11 0.93 0.19 True
+0.63 -0.02 0.91 False
+0.04 0.67 0.43 True
+-0.26 0.75 0.23 False
+0.20 0.32 0.32 True
+0.76 0.43 0.66 True
+
+Bootstrap sample set 3
+0.99 -0.03 0.54 False
+0.64 0.48 0.15 True
+0.96 0.43 0.69 True
+0.79 0.37 0.21 True
+0.02 0.29 0.32 True
+0.32 0.77 0.70 True
+
+Bootstrap sample set 4
+0.63 -0.36 1.00 False
+-0.72 0.64 0.42 False
+0.21 0.08 0.91 True
+0.39 0.55 0.23 True
+-0.33 0.55 0.40 False
+-0.79 0.58 0.44 False
+
+Bootstrap sample set 5
+0.71 0.56 0.31 True
+0.35 -0.66 0.38 False
+-0.02 0.92 0.65 False
+0.39 -0.14 0.03 False
+-0.39 0.82 0.32 False
+0.89 -0.90 0.63 False
+
+Classification: 
+0.21 0.67 0.93 True (correct)
+0.61 0.48 0.76 True (correct)
+0.22 0.97 0.99 True (correct)
+0.66 0.39 0.45 True (correct)
+0.05 0.78 0.88 True (correct)
+0.71 0.56 0.60 True (correct)
+-0.05 0.90 0.45 True (correct)
+0.01 0.90 0.76 True (correct)
+0.68 0.28 0.67 True (correct)
+0.46 0.12 0.41 True (correct)
+0.28 0.52 0.28 True (correct)
+0.90 0.63 0.39 True (correct)
+0.50 0.49 0.83 True (correct)
+0.61 0.37 0.33 True (correct)
+0.46 0.51 0.88 True (correct)
+0.72 -0.18 0.67 False (false negative)
+0.44 0.24 0.12 True (correct)
+0.81 0.12 0.25 True (correct)
+0.34 0.18 0.55 False (false negative)
+0.56 0.20 0.40 True (correct)
+-0.32 0.66 0.95 False (correct)
+-0.52 0.40 0.83 False (correct)
+0.07 0.06 0.08 False (correct)
+0.04 0.32 0.30 False (correct)
+0.19 0.54 0.10 True (false positive)
+-0.15 0.83 0.86 False (correct)
+-0.97 0.77 1.00 False (correct)
+-0.55 0.72 0.33 False (correct)
+-0.43 0.69 0.07 False (correct)
+-0.89 0.26 0.44 False (correct)
+0.83 -0.39 0.61 False (correct)
+0.82 -0.89 0.93 False (correct)
+0.19 -0.26 0.90 False (correct)
+0.59 -0.50 0.61 False (correct)
+0.82 -0.53 0.20 False (correct)
+0.45 -0.43 0.97 False (correct)
+0.62 -0.70 0.72 False (correct)
+0.35 -0.52 0.56 False (correct)
+0.16 -0.56 0.69 False (correct)
+0.43 -0.84 0.73 False (correct)
