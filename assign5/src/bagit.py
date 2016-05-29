@@ -1,13 +1,5 @@
 import numpy as np
-#from numpy.linalg import inv
 import sys
-#import math
-
-def parseX(data):
-    x = data.split("\n")
-    x = map((lambda row: row.split()),x)
-    x = [map(float,attribute) for attribute in x]
-    return x
 
 class bagging:
 
@@ -23,23 +15,16 @@ class bagging:
         self.classifers = []
         self.train = self.addLabel(self.train,self.meta[0][1])
         self.test = self.addLabel(self.test,self.meta[1][1])
-        #self.train_pos = []
-        #for i in range(self.meta[0][1]):
-        #   self.train_pos.append(train[i])
-        #for j in range(self.meta[0][2]):
-        #print "20:", len(self.train[self.meta[0][1]:])
-
-        #self.buildClassifier(self.train[0:(self.meta[0][1])], self.train[self.meta[0][1]:])
-        #self.applyToTest(self.test, self.classifers[0], self.meta[1][0],self.meta[1][1])
-        # preparation finished
         self.numOfSample = int(numOfSample)
         self.sizeOfSample = int(sizeOfSample)
+        # preparation finished
         self.bagging(self.numOfSample, self.sizeOfSample)
 
     def bagging(self,numOfSample, sizeOfSample):
         classifers = []
         result = []
         self.bootstrapSamples = [] # save for printing result
+
         for ithBootstrap in range(numOfSample):
             indices = np.random.randint(low = 0, high = (self.meta[0][1] + self.meta[0][2]) , size=sizeOfSample)
             train = [self.train[i] for i in indices]
@@ -47,31 +32,40 @@ class bagging:
             train_pos = []
             train_neg = []
             ithClassifier = None
+
             for point in train:
+                # parse bootstrapped data into positive and negative
+                # in order to build linear classifier
                 if point[self.dimension] == 1:
                     train_pos.append(point)
                 else:
                     train_neg.append(point)
             if train_pos == []:
+                # if all bootstrapped sample are positve
+                # we classify all test data positive
                 ithClassifier = "ALL POSITIVE"
             elif train_neg == []:
                 ithClassifier = "ALL NEGATIVE"
             else:
+                # build binary classifier
                 ithClassifier = self.buildClassifier(train_pos,train_neg)
             classifers.append(ithClassifier)
 
             resultOneSample = self.applyToTest(self.test,ithClassifier)
             result.append(resultOneSample)
-        #print result
+        # call majority vote and print output
         self.result = self.majorityVote(result)
         self.evaluation()
 
     def majorityVote(self,predictMatrix):
         result = []
         P,N,FP,FN = 0,0,0,0
+
         for ithTest in range(self.meta[1][1] + self.meta[1][2]):
             pos,neg = 0,0
+
             for jthBootstrap in range(len(predictMatrix)):
+                # majority vote over different samples
                 if (predictMatrix[jthBootstrap][ithTest] == 1):
                     pos+=1
                 else:
@@ -83,7 +77,6 @@ class bagging:
                 if (self.test[ithTest][self.dimension] == -1):
                     FP += 1
                     self.test[ithTest].append("(false positive)")
-                    #print "FP!!!!!!"
                 else:
                     self.test[ithTest].append("(correct)")
             else:
@@ -95,15 +88,7 @@ class bagging:
                     self.test[ithTest].append("(false negative)")
                 else:
                     self.test[ithTest].append("(correct)")
-                    #print "FN!!!!!!"
-                        #if (predict < 0): ######predict positive########## condition@!!@!!!!
-                #    P += 1
-                #    if actual == 0:
-                #        FP += 1
-                #else:
-                #    N += 1
-                #    if actual == 1:
-                #        FN += 1
+        # the statistics will be print regardless of "-v" option
         self.statistics = [P,N,FP,FN]
         return result
 
@@ -122,15 +107,11 @@ class bagging:
             return "False"
 
     def buildClassifier(self,positives,negatives):
-        #print "gg"
         pos_centroid = self.centroid(positives)
-        #print pos_centroid
         neg_centroid = self.centroid(negatives)
-        #print neg_centroid
         midPoint = self.midPoint(pos_centroid,neg_centroid)
         normalVec = self.normalVec(pos_centroid,neg_centroid)
-        #print normalVec
-        #normalVec dot (newPoint - midPoint) < 0 -> Positive
+        # normalVec dot (newPoint - midPoint) < 0 -> Positive
         
         func = normalVec
 
@@ -147,7 +128,6 @@ class bagging:
             for ithAttr in range(self.dimension):
                 centroid[ithAttr] += dataPoint[ithAttr]
         centroid = map((lambda x: x/len(data)),centroid)
-        #print len(data)
         return centroid
     
     def midPoint(self,pointA,pointB):
@@ -163,7 +143,7 @@ class bagging:
         return normalVec
 
     def applyToTest(self,testData,classifer):
-        #actual = -1
+        # apply classifer to test data
         predict = -1
         predictResult = []
         if isinstance(classifer,list): 
@@ -181,20 +161,20 @@ class bagging:
             print("Error! Wrong classifier!")
             
     def evaluation(self):
+        # print out result
         output = ""
         output += "Positive examples: " + str(self.statistics[0]) + "\n"
         output += "Negative examples: " + str(self.statistics[1]) + "\n"
         output += "False positives: " + str(self.statistics[2]) + "\n"
         output += "False negatives: " + str(self.statistics[3]) + "\n"
-        #print self.bootstrapSamples[0][0][0]
-        #print "%.2f" % self.bootstrapSamples[0][0][0]
+
         if (sys.argv[1] == "-v"):
             for ithBootstrap in range(self.numOfSample):
                 output += "\nBootstrap sample set " + str(ithBootstrap+1) + "\n"
                 for jthData in range(self.sizeOfSample):
                     output += " ".join(map((lambda x:  "%.2f" % x), self.bootstrapSamples[ithBootstrap][jthData][0:-1])) + " "
                     output += self.convertLabel(self.bootstrapSamples[ithBootstrap][jthData][-1]) + "\n"
-                #output += "\n"
+
             output += "\nClassification: "
             for ithTest in self.test:
                 output += "\n" + " ".join(map((lambda x:  "%.2f" % x), ithTest[0:-3])) + " "
@@ -204,6 +184,7 @@ class bagging:
         print output
 
 # Helper method
+# essentially dot product
 def applyFunc(func,dataPoint):
     sum = 0.0
     # last index of func is a constant
@@ -213,18 +194,26 @@ def applyFunc(func,dataPoint):
     sum += func[-1]
     return sum
 
+# Helper method
 def sign(predict):
     if (predict >= 0.0): # negative class
         return -1
     else:
         return 1
-
+        
+# Helper method
+# parse data into matrix form
+def parseX(data):
+    x = data.split("\n")
+    x = map((lambda row: row.split()),x)
+    x = [map(float,attribute) for attribute in x]
+    return x
 
 if (len(sys.argv) == 6):
     # verbose
     bagging(sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5])
 elif (len(sys.argv) == 5):
     bagging(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
-    # numOfSample, sizeOfSample, trainData, testData
+            # numOfSample, sizeOfSample, trainData, testData
 else:
     print("Error: Invalid Filename")
