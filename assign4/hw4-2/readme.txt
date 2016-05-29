@@ -1,0 +1,1 @@
+python kerpercep.py sigma positive_training negative_training positive_testing negative_testing
