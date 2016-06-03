@@ -167,12 +167,12 @@ class bagging:
         output += "Negative examples: " + str(self.statistics[1]) + "\n"
         output += "False positives: " + str(self.statistics[2]) + "\n"
         output += "False negatives: " + str(self.statistics[3]) + "\n"
-        output += "Error rate: " + "%2.2f" % (float(self.statistics[2]+self.statistics[3])/(self.statistics[0]*self.statistics[1])*100) + "%"
+        output += "Error rate: " + "%2.2f" % (float(self.statistics[2]+self.statistics[3])/(self.statistics[0]+self.statistics[1])*100) + "%"
 
 
         if (sys.argv[1] == "-v"):
             for ithBootstrap in range(self.numOfSample):
-                output += "\nBootstrap sample set " + str(ithBootstrap+1) + "\n"
+                output += "\nBootstrap sample set " + str(ithBootstrap+1) + ":\n"
                 for jthData in range(self.sizeOfSample):
                     output += " ".join(map((lambda x:  "%.2f" % x), self.bootstrapSamples[ithBootstrap][jthData][0:-1])) + " "
                     output += self.convertLabel(self.bootstrapSamples[ithBootstrap][jthData][-1]) + "\n"

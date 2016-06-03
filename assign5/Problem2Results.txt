@@ -1,34 +1,34 @@
 python bagit.py 1 40 ../HW5-data/Problem\ 2/training.txt ../HW5-data/Problem\ 2/testing.txt 
-Positive examples: 23
-Negative examples: 17
-False positives: 6
-False negatives: 3
-Error rate: 2.30%
-
-python bagit.py 3 40 ../HW5-data/Problem\ 2/training.txt ../HW5-data/Problem\ 2/testing.txt 
 Positive examples: 21
 Negative examples: 19
 False positives: 5
 False negatives: 4
-Error rate: 2.26%
+Error rate: 22.50%
 
-python bagit.py 5 40 ../HW5-data/Problem\ 2/training.txt ../HW5-data/Problem\ 2/testing.txt 
+python bagit.py 3 40 ../HW5-data/Problem\ 2/training.txt ../HW5-data/Problem\ 2/testing.txt 
 Positive examples: 22
 Negative examples: 18
 False positives: 5
 False negatives: 3
-Error rate: 2.02%
+Error rate: 20.00%
+
+python bagit.py 5 40 ../HW5-data/Problem\ 2/training.txt ../HW5-data/Problem\ 2/testing.txt 
+Positive examples: 19
+Negative examples: 21
+False positives: 4
+False negatives: 5
+Error rate: 22.50%
 
 python bagit.py 7 40 ../HW5-data/Problem\ 2/training.txt ../HW5-data/Problem\ 2/testing.txt 
-Positive examples: 20
-Negative examples: 20
+Positive examples: 21
+Negative examples: 19
 False positives: 4
-False negatives: 4
-Error rate: 2.00%
+False negatives: 3
+Error rate: 17.50%
 
 python bagit.py 9 40 ../HW5-data/Problem\ 2/training.txt ../HW5-data/Problem\ 2/testing.txt 
 Positive examples: 20
 Negative examples: 20
 False positives: 4
 False negatives: 4
-Error rate: 2.00%
+Error rate: 20.00%
